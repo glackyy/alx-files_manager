@@ -25,3 +25,7 @@ class DBClient {
     return usersNum;
   }
 }
+
+const dbClient = new DBClient();
+
+module.exports = dbClient;
