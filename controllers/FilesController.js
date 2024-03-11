@@ -242,7 +242,28 @@ class FilesController {
               fileName = `${file.localPath}_${size}`;
             }
             const data = await fs.readFile(fileName);
-            const contentType = mime
+            const contentType = mime.contentType(file.name);
+            return response.header('Content-Type', contentType).status(200).send(data);
+          } catch (error) {
+            console.log(error);
+            return response.status(404).json({ error: 'Not found' });
+          }
+        } else {
+          const user = await FilesController.getUser(request);
+          if (!user) {
+            return response.status(404).json({ error: 'Not found' });
+          }
+          if (file.userId.toString() === user._id.toString()) {
+            if (file.type === 'folder') {
+              return response.status(400).json({ error: "A folder doesn't have content" });
+            }
+            try {
+              let fileName = file.localPath;
+              const size = request.param('size');
+              if (size) {
+                
+              }
+            }
           }
         }
       })
