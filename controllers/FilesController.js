@@ -45,5 +45,25 @@ class FilesController {
       return response.status(400).json({ error: 'Missing data'});
     }
     const files = dbClient.client.db().collection('files');
+    if (parentId) {
+      const idObject = new ObjectID(parentId);
+      const file = await files.findOne({ _id: idObject, userId: user._id });
+      if (!file) {
+        return response.status(400).json({ error: 'Parent not found' });
+      }
+      if (file.type !== 'folder') {
+        return response.status(400).json({ error: 'Parent is not a folder' });
+      }
+    }
+    if (type === 'folder') {
+      files.insertOne(
+        {
+            userId: user._id,
+            name,
+            type,
+            
+        }
+      )
+    }
   }
 }
