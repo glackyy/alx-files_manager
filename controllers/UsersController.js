@@ -10,5 +10,15 @@ class UsersController {
   static postNew(request, response) {
     const { email } = request.body;
     const { password } = request.body;
+
+    if (!email) {
+      response.status(400).json({ error: 'Missing email'});
+      return;
+    }
+    if (!password) {
+      response.status(400).json({ error: 'Missing password' });
+      return;
+    }
   }
+
 }
