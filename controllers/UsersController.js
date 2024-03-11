@@ -19,6 +19,16 @@ class UsersController {
       response.status(400).json({ error: 'Missing password' });
       return;
     }
+
+    const users = dbClient.db.collection('users');
+    users.findOne({ email }, (error, user) => {
+      if (user) {
+        response.status(400).json({ error: 'Already exist' });
+      } else {
+        const hshPassword = sha1(password);
+        
+      }
+    })
   }
 
 }
