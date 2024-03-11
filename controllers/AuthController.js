@@ -15,7 +15,7 @@ class AuthController {
       return;
     }
     const hashedPassword = sha1(data[1]);
-    const users = dbClient.db.collection('users');
+    const users = dbClient.client.db().collection('users');
     users.findOne({ email: data[0], password: hashedPassword }, async (err, user) => {
       if (user) {
         const token = uuidv4();
