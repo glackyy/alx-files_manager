@@ -14,5 +14,17 @@ class AuthController {
       response.status(401).json({ error: 'Unauthorized' });
       return;
     }
+    const hashedPassword = sha1(data[1]);
+    const users = dbClient.db.collection('users');
+    users.findOne({ email: data[0], password: hashedPassword }, async (err, user) => {
+      if (user) {
+        const token = uuidv4();
+        const key = `auth_${token}`;
+        await redisClient.set(key, user._id.toString(), 60 * 60 * 24);
+        response.status(200).json({ token });
+      } else {
+        response.status(401).json({ error: 'Unauthorized' });
+      }
+    });
   }
 }
