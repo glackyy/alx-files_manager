@@ -13,7 +13,7 @@ class FilesController {
       const key = `auth_${token}`;
       const userId = await redisClient.get(key);
       if (userId) {
-        const users = dbClient.db.collection('users');
+        const users = dbClient.client.db().collection('users');
         const idObject = new ObjectID(userId);
         const user = await users.findOne({ _id: idObject });
         if (!user) {
@@ -44,7 +44,7 @@ class FilesController {
         return response.status(400).json({ error: 'Missing data' });
       }
   
-      const files = dbClient.db.collection('files');
+      const files = dbClient.client.db().collection('files');
       if (parentId) {
         const idObject = new ObjectID(parentId);
         const file = await files.findOne({ _id: idObject, userId: user._id });
