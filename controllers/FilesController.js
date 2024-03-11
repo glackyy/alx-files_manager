@@ -89,9 +89,33 @@ class FilesController {
       }
       files.insertOne(
         {
-          userId:
+          userId: user._id,
+          name,
+          type,
+          isPublic,
+          parent: parentId || 0,
+          localPath: fileName,
+        },
+      ).then((res) => {
+        response.status(201).json(
+          {
+            id: res.insertedId,
+            userId: user._id,
+            name,
+            type,
+            isPublic,
+            parentId: parentId || 0,
+          },
+        );
+        if (type === 'image') {
+          fileQueue.add(
+            {
+              userId: user._id,
+              filedId: res.insertedId,
+            },
+          )
         }
-      )
+      })
     }
   }
 }
