@@ -20,7 +20,7 @@ class UsersController {
       return;
     }
 
-    const users = dbClient.db.collection('users');
+    const users = dbClient.client.db().collection('users');
     users.findOne({ email }, (err, user) => {
       if (user) {
         response.status(400).json({ error: 'Already exist' });
@@ -44,7 +44,7 @@ class UsersController {
     const key = `auth_${token}`;
     const userId = await redisClient.get(key);
     if (userId) {
-      const users = dbClient.db.collection('users');
+      const users = dbClient.client.db().collection('users');
       const idObject = new ObjectID(userId);
       users.findOne({ _id: idObject }, (err, user) => {
         if (user) {
