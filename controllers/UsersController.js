@@ -5,3 +5,10 @@ import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
 const userQ = new Queue('userQueue', 'redis://127.0.0.1:6379');
+
+class UsersController {
+  static postNew(request, response) {
+    const { email } = request.body;
+    const { password } = request.body;
+  }
+}
