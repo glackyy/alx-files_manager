@@ -261,12 +261,21 @@ class FilesController {
               let fileName = file.localPath;
               const size = request.param('size');
               if (size) {
-                
+                fileName = `${file.localPath}_${size}`;
               }
+              const contentType = mime.contentType(file.name);
+              return response.header('Content-Type', contentType).status(400).sendFile(fileName);
+            } catch (error) {
+              console.log(error);
+              return response.status(404).json({ error: 'Not found' });
             }
+          } else {
+            console.log(`Wrong user: file.userId=${file.userId}; userId=${user._id}`);
+            return response.status(404).json({ error: 'Not found' });
           }
         }
-      })
+      });
     }
-  }    
+  }
+
 module.exports = FilesController;
