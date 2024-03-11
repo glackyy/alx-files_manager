@@ -27,4 +27,13 @@ class RedisClient {
     await rdSet(key, value);
     await this.client.expire(key, time);
   }
+
+  async del(key) {
+    const rdDel = promisify(this.client.del).bind(this.client);
+    await rdDel(key);
+  }
 }
+
+const redisClient = new RedisClient();
+
+module.exports = redisClient();
