@@ -34,6 +34,16 @@ class FilesController {
     const { type } = request.body;
     const { parentId } = request.body;
     const isPublic = request.body.isPublic || false;
-    
+    const { data } = request.body;
+    if (!name) {
+      return response.status(400).json({ error: 'Missing name'});
+    }
+    if (!type) {
+      return response.status(400).json({ error: 'Missing type' });
+    }
+    if (type !== 'folder' && !data) {
+      return response.status(400).json({ error: 'Missing data'});
+    }
+    const files = dbClient.client.db().collection('files');
   }
 }
