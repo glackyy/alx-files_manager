@@ -13,5 +13,13 @@ class FilesController {
     const token = request.header('X-Token');
     const key = `auth_${token}`;
     const userId = await redisClient.get(key);
+    if (userId) {
+      const users = dbClient.client.db().collection('users');
+      const idObject = new ObjectID(userId);
+      const user = await users.findOne({ _id: idObject });
+      if (!user) {
+        return null;
+      }
+    }
   }
 }
