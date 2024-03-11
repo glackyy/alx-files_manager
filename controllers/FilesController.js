@@ -134,6 +134,37 @@ class FilesController {
           return response.status(404).json({ error: 'Not found' });
         }
         return response.status(200).json(file);
+    }
+
+    static async getIndex(request, response) {
+      const user = await FilesController.getUser(request);
+      if (!user) {
+        return response.status(401).json({ error: 'Unauthorized '});
       }
+      const {
+        parentId,
+        page,
+      } = request.query;
+      const pageNum = page || 0;
+      const files = dbClient.client.db().collection('files');
+      let query;
+      if (!parentId) {
+        query = { userId: user._id };
+      } else {
+        query = { userId: user._id, parentId: ObjectID(parentId) };
+      }
+      files.aggregate(
+        [
+          { $match: query },
+          { $sort: { _id: -1 } },
+          {
+            $facet: {
+              metadata: [{ $count: 'total' }, { $addFields: { page: parseInt(pageNum, 10) } }],
+              data: [{ $skip: 20 * parseInt(pageNum, 10) }, { $limit: 20 }],
+            },
+          },
+        ],
+      )
+    }
 }    
 module.exports = FilesController;
