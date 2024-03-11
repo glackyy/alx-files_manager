@@ -44,7 +44,6 @@ class FilesController {
     if (type !== 'folder' && !data) {
       return response.status(400).json({ error: 'Missing data' });
     }
-
     const files = dbClient.client.db().collection('files');
     if (parentId) {
       const idObject = new ObjectID(parentId);
@@ -62,11 +61,11 @@ class FilesController {
           userId: user._id,
           name,
           type,
-          parentId: parentId || 0,
           isPublic,
+          parentId: parentId || 0,
         },
-      ).then((result) => response.status(201).json({
-        id: result.insertedId,
+      ).then((res) => response.status(201).json({
+        id: res.insertedId,
         userId: user._id,
         name,
         type,
@@ -83,7 +82,7 @@ class FilesController {
         try {
           await fs.mkdir(filePath);
         } catch (error) {
-          // pass. Error file already exists
+          // pass. Error file Already exists
         }
         await fs.writeFile(fileName, buff, 'utf-8');
       } catch (error) {
@@ -95,13 +94,13 @@ class FilesController {
           name,
           type,
           isPublic,
-          parentId: parentId || 0,
+          parent: parentId || 0,
           localPath: fileName,
         },
-      ).then((result) => {
+      ).then((res) => {
         response.status(201).json(
           {
-            id: result.insertedId,
+            id: res.insertedId,
             userId: user._id,
             name,
             type,
@@ -113,7 +112,7 @@ class FilesController {
           fileQueue.add(
             {
               userId: user._id,
-              fileId: result.insertedId,
+              filedId: res.insertedId,
             },
           );
         }
