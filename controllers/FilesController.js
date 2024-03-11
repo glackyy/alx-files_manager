@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import Queue from 'bull';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
-import mime from 'mime-types';
 
 const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 
@@ -36,13 +35,13 @@ class FilesController {
     const isPublic = request.body.isPublic || false;
     const { data } = request.body;
     if (!name) {
-      return response.status(400).json({ error: 'Missing name'});
+      return response.status(400).json({ error: 'Missing name' });
     }
     if (!type) {
       return response.status(400).json({ error: 'Missing type' });
     }
     if (type !== 'folder' && !data) {
-      return response.status(400).json({ error: 'Missing data'});
+      return response.status(400).json({ error: 'Missing data' });
     }
     const files = dbClient.client.db().collection('files');
     if (parentId) {
@@ -82,6 +81,7 @@ class FilesController {
         try {
           await fs.mkdir(filePath);
         } catch (error) {
+          // pass. Error file Already exists
         }
         await fs.writeFile(fileName, buff, 'utf-8');
       } catch (error) {
@@ -113,9 +113,12 @@ class FilesController {
               userId: user._id,
               filedId: res.insertedId,
             },
-          )
+          );
         }
-      })
+      }).catch((error) => console.log(error));
     }
+    return null;
   }
 }
+
+module.exports = FilesController;
