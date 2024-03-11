@@ -15,4 +15,10 @@ class RedisClient {
     }
     return false;
   }
+
+  async get(key) {
+    const rdGet = promisify(this.client.get).bind(this.client);
+    const val = await rdGet(key);
+    return val;
+  }
 }
