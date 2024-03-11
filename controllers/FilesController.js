@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Queue from 'bull';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
-import { error } from 'console';
+import mime from 'mime-types';
 
 const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 
@@ -222,5 +222,30 @@ class FilesController {
       return null;
     }
 
+    static async getFile(request, response) {
+      const { id } = request.params;
+      const files = dbClient.client.db().collection('files');
+      const idObject = new ObjectID(id);
+      files.findOne({ _id: idObject }, async (error, file) => {
+        if (!file) {
+          return response.status(404).json({ error: 'Not found' });
+        }
+        console.log(file.localPath);
+        if (file.isPublic) {
+          if (file.type === 'folder') {
+            return response.status(400).json({ error: "A folder doesn't have content" });
+          }
+          try {
+            let fileName = file.localPath;
+            const size = request.params('size');
+            if (size) {
+              fileName = `${file.localPath}_${size}`;
+            }
+            const data = await fs.readFile(fileName);
+            const contentType = mime
+          }
+        }
+      })
+    }
   }    
 module.exports = FilesController;
