@@ -120,6 +120,20 @@ class FilesController {
       }
       return null;
     }
-}
 
+    static async getShow(request, response) {
+        const user = await FilesController.getUser(request);
+        if (!user) {
+            return response.status(401).json({ error : 'Unauthorized' });
+        }
+        const fileId = request .params.id;
+        const files = dbClient.client.db().collection('files');
+        const idObject = new ObjectID(fileId);
+        const file = await files.findOne({ _id: idObject, userId: user._id });
+        if (!file) {
+          return response.status(404).json({ error: 'Not found' });
+        }
+        return response.status(200).json(file);
+      }
+}    
 module.exports = FilesController;
