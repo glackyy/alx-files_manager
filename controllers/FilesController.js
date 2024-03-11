@@ -58,10 +58,38 @@ class FilesController {
     if (type === 'folder') {
       files.insertOne(
         {
-            userId: user._id,
-            name,
-            type,
-            
+          userId: user._id,
+          name,
+          type,
+          isPublic,
+          parentId: parentId || 0,
+        },
+      ).then((res) => response.status(201).json({
+        id: res.insertedId,
+        userId: user._id,
+        name,
+        type,
+        isPublic,
+        parentId: parentId || 0,
+      })).catch((error) => {
+        console.log(error);
+      });
+    } else {
+      const filePath = process.env.FOLDER_PATH || '/tmp/files_manager';
+      const fileName = `${filePath}/${uuidv4()}`;
+      const buff = Buffer.from(data, 'base64');
+      try {
+        try {
+          await fs.mkdir(filePath);
+        } catch (error) {
+        }
+        await fs.writeFile(fileName, buff, 'utf-8');
+      } catch (error) {
+        console.log(error);
+      }
+      files.insertOne(
+        {
+          userId:
         }
       )
     }
