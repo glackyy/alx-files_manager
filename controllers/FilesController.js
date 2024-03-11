@@ -194,7 +194,7 @@ class FilesController {
     const idObject = new ObjectID(id);
     const newValue = { $set: { isPublic: true } };
     const options = { returnOriginal: false };
-    files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (error, file) => {
+    files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (err, file) => {
       if (!file.lastErrorObject.updateExisting) {
         return response.status(404).json({ error: 'Not found' });
       }
@@ -213,7 +213,7 @@ class FilesController {
     const idObject = new ObjectID(id);
     const newValue = { $set: { isPublic: false } };
     const options = { returnOriginal: false };
-    files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (error, file) => {
+    files.findOneAndUpdate({ _id: idObject, userId: user._id }, newValue, options, (err, file) => {
       if (!file.lastErrorObject.updateExisting) {
         return response.status(404).json({ error: 'Not found' });
       }
