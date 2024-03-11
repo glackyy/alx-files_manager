@@ -4,7 +4,7 @@ import Queue from 'bull';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
-const userQ = new Queue('userQueue', 'redis://127.0.0.1:6379');
+const userQueue = new Queue('userQueue', 'redis://127.0.0.1:6379');
 
 class UsersController {
   static postNew(request, response) {
@@ -21,19 +21,19 @@ class UsersController {
     }
 
     const users = dbClient.db.collection('users');
-    users.findOne({ email }, (error, user) => {
+    users.findOne({ email }, (err, user) => {
       if (user) {
         response.status(400).json({ error: 'Already exist' });
       } else {
-        const hshPassword = sha1(password);
+        const hashedPassword = sha1(password);
         users.insertOne(
           {
             email,
-            password: hshPassword,
+            password: hashedPassword,
           },
-        ).then((res) => {
-          response.status(201).json({ id: res.insertedId, email });
-          userQ.add({ userId: res.insertedId });
+        ).then((result) => {
+          response.status(201).json({ id: result.insertedId, email });
+          userQueue.add({ userId: result.insertedId });
         }).catch((error) => console.log(error));
       }
     });
@@ -46,7 +46,7 @@ class UsersController {
     if (userId) {
       const users = dbClient.db.collection('users');
       const idObject = new ObjectID(userId);
-      users.findOne({ _id: idObject }, (error, user) => {
+      users.findOne({ _id: idObject }, (err, user) => {
         if (user) {
           response.status(200).json({ id: userId, email: user.email });
         } else {
