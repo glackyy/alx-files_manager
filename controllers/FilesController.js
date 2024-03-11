@@ -20,6 +20,20 @@ class FilesController {
       if (!user) {
         return null;
       }
+      return user;
     }
+    return null;
+  }
+
+  static async postUpload(request, response) {
+    const user = await FilesController.getUser(request);
+    if (!user) {
+      return response.status(401).json({ error: 'Unauthorized' });
+    }
+    const { name } = request.body;
+    const { type } = request.body;
+    const { parentId } = request.body;
+    const isPublic = request.body.isPublic || false;
+    
   }
 }
