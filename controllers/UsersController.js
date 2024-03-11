@@ -12,7 +12,7 @@ class UsersController {
     const { password } = request.body;
 
     if (!email) {
-      response.status(400).json({ error: 'Missing email'});
+      response.status(400).json({ error: 'Missing email' });
       return;
     }
     if (!password) {
