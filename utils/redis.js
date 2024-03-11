@@ -21,4 +21,10 @@ class RedisClient {
     const val = await rdGet(key);
     return val;
   }
+
+  async set(key, value, time) {
+    const rdSet = promisify(this.client.set).bind(this.client);
+    await rdSet(key, value);
+    await this.client.expire(key, time);
+  }
 }
