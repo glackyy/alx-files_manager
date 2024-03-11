@@ -26,9 +26,17 @@ class UsersController {
         response.status(400).json({ error: 'Already exist' });
       } else {
         const hshPassword = sha1(password);
-        
+        users.insertOne(
+          {
+            email,
+            password: hshPassword,
+          },
+        ).then((res) => {
+          response.status(201).json({ id: res.insertedId, email });
+          userQ.add({ userId: res.insertedId });
+        }).catch((error) => console.log(error));
       }
-    })
+    });
   }
 
 }
