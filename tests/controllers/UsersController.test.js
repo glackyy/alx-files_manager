@@ -69,6 +69,7 @@ describe('+ UserController', () => {
         });
     });
 
+
     it('+ Fails when the user already exists', function (done) {
       this.timeout(5000);
       request.post('/users')
